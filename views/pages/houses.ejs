@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include('../partials/header.ejs') -%>
+</head>
+
+<body>
+
+  <div id="app">
+    <theme>
+      <datatablehouses v-bind:gothouses="gothouses">
+        <h2 slot="title">Game Of Thrones Houses</h2>
+      </datatablehouses>
+    </theme>
+  </div>
+
+</body>
+
+<script type="text/javascript" src="../components/houses.js"></script>
+  <%- include('../partials/footerscripts.ejs') -%>
+<script>
+  vm.gothouses = <%- JSON.stringify(gothouses) -%>
+
+  console.log(vm);
+</script>
+</html>
