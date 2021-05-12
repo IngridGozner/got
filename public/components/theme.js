@@ -2,6 +2,7 @@ Vue.component('theme', {
   data: function () {
       return {
         title: 'Game Of Thrones',
+        logo: '../pictures/logo.png',
       }
     },
   template:
@@ -14,8 +15,8 @@ Vue.component('theme', {
 
     <v-img
        class="mr-3"
-       src="../pictures/logo.png"
-       lazy-src="../pictures/logo.png"
+       :src=logo
+       :lazy-src=logo
        max-height="55"
        max-width="50"
        contain

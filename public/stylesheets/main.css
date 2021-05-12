@@ -10,3 +10,7 @@ div.v-application--wrap {
 div.theme--dark.v-data-table{
   background-color: rgba(0, 0, 0, 0.6);
 }
+
+h2{
+  font-family: 'Uncial Antiqua', cursive;
+}

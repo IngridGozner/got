@@ -44,7 +44,7 @@ Vue.component('datatablehouses', {
            :src="\`../pictures/\${houseIndex}.png\`"
            :lazy-src="\`../pictures/\${houseIndex}.png\`"
          >
-           <v-card-title style="font-size:26px; text-shadow: 2px 2px 4px #000000;" class="white--text mt-8">
+           <v-card-title style="font-size:26px; font-family: 'Uncial Antiqua', cursive; text-shadow: 2px 2px 4px #000000;" class="white--text">
                {{ house.name }}
            </v-card-title>
          </v-img>
