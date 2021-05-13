@@ -3,14 +3,17 @@ const path = require('path')
 const PORT = process.env.PORT || 5000
 const fetch = require("node-fetch");
 
-async function loadHouses(req, res){
-  let gotHouses = await getData('https://anapioficeandfire.com/api/houses/');
+let gotHousesCache = [];
 
-  res.render('pages/houses', {gothouses: gotHouses});
+async function loadHouses(req, res){
+  // let gotHouses = await getData();
+  await getData();
+  res.render('pages/houses', {gothouses: gotHousesCache});
 }
 
-async function getData(url) {
-    const response = await fetch(url);
+async function getData() {
+  if(gotHousesCache.length === 0){
+    const response = await fetch('https://anapioficeandfire.com/api/houses/');
     let data = await response.json();
 
     let swornMembersURL = [];
@@ -18,8 +21,6 @@ async function getData(url) {
 
     let cadetBranchesURL = [];
     let cadetBranches = [];
-
-    let gotHouses = [];
 
     for(let house of data){
       try {
@@ -79,10 +80,11 @@ async function getData(url) {
         console.error(error);
       }
 
-      gotHouses.push(house);
+      gotHousesCache.push(house);
     }
+  }
 
-    return gotHouses;
+    return gotHousesCache;
 }
 
 async function getName(url){
