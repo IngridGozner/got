@@ -4,8 +4,8 @@ Vue.component('datatablehouses', {
     return {
       dialog: false,
       house: {},
-      keyTitle: ['Region', 'Coat Of Arms', 'Words', 'Titles', 'Seats', 'Current Lord', 'Heir', 'Overlord', 'Founded', 'Founder', 'Died Out', 'Cadet Branches', 'Sworn Members'],
-      keys:['region', 'coatOfArms', 'words', 'titles', 'seats', 'currentLord', 'heir', 'overlord', 'founded', 'founder', 'diedOut', 'cadetBranches', 'swornMembers'],
+      keyTitle: ['Region', 'Coat Of Arms', 'Words', 'Titles', 'Seats', 'Current Lord', 'Heir', 'Overlord', 'Founded', 'Founder', 'Died Out','Ancestral Weapons', 'Cadet Branches', 'Sworn Members'],
+      keys:['region', 'coatOfArms', 'words', 'titles', 'seats', 'currentLord', 'heir', 'overlord', 'founded', 'founder', 'diedOut', 'ancestralWeapons', 'cadetBranches', 'swornMembers'],
       houseIndex: '',
 
       headers: [
@@ -35,10 +35,10 @@ Vue.component('datatablehouses', {
 
       <v-dialog
         v-model="dialog"
-        width="500"
+        width="600"
       >
 
-      <v-card width="600">
+      <v-card>
          <v-img
            height="200px"
            :src="\`../pictures/\${houseIndex}.png\`"
@@ -65,8 +65,9 @@ Vue.component('datatablehouses', {
                    <strong>{{ keyTitle[index] }}</strong>
                  </div>
 
-                 <div v-if="element == 'titles' || element == 'seats' || element == 'swornMembers' || element == 'cadetBranches'">
-                 <v-list-item v-for="el in house[element]" :key="el">
+                 <div v-if="house[element] == '' "> Unknown </div>
+                 <div v-else-if="element == 'titles' || element == 'seats' || element == 'swornMembers' || element == 'cadetBranches' || element == 'ancestralWeapons'">
+                 <v-list-item v-for="(el, index) in house[element]" :key="index">
                     <v-list-item-content>
                       <v-list-item-subtitle>{{ el }}</v-list-item-subtitle>
                     </v-list-item-content>
@@ -74,7 +75,6 @@ Vue.component('datatablehouses', {
                  </div>
 
                  <div v-else-if="house[element] != ''">{{ house[element] }}</div>
-                 <div v-else> - </div>
 
                </div>
              </v-timeline-item>

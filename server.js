@@ -22,19 +22,20 @@ async function getData(url) {
     let gotHouses = [];
 
     for(let house of data){
-      try{
+      try {
+
         if(house.overlord != ""){
           house.overlord = await getName(house.overlord);
-        };
+        }
         if(house.currentLord != ""){
           house.currentLord = await getName(house.currentLord);
-        };
+        }
         if(house.heir != ""){
           house.heir = await getName(house.heir);
-        };
+        }
         if(house.founder != ""){
           house.founder = await getName(house.founder);
-        };
+        }
 
       if(house.swornMembers.length != 0){
         swornMembersURL = [];
