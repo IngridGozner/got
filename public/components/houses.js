@@ -9,8 +9,12 @@ Vue.component('datatablehouses', {
       keyTitle: ['Region', 'Coat Of Arms', 'Words', 'Titles', 'Seats', 'Current Lord', 'Heir', 'Overlord', 'Founded', 'Founder', 'Died Out','Ancestral Weapons', 'Cadet Branches', 'Sworn Members'],
       keys:['region', 'coatOfArms', 'words', 'titles', 'seats', 'currentLord', 'heir', 'overlord', 'founded', 'founder', 'diedOut', 'ancestralWeapons', 'cadetBranches', 'swornMembers'],
 
+      regionImages: {'The Reach': '../pictures/houseTyrell.png', 'The Vale': '../pictures/houseArryn.png', 'The North': '../pictures/houseStark.png', 'The Riverlands': '../pictures/houseTully.png', 'The Westerlands': '../pictures/houseLannister.png', 'The Crownlands': '../pictures/houseTargaryen.png', 'Iron Islands': '../pictures/houseGreyjoy.png', 'Dorne': '../pictures/houseMartell.png', 'The Neck': '../pictures/houseReed.png', 'The Stormlands': '../pictures/houseBaratheon.png'},
+
+
       headers: [
        { text: 'House Name', value: 'name' },
+       { text: 'Region', value: 'regionImages'}
      ],
     }
   },
@@ -34,18 +38,13 @@ Vue.component('datatablehouses', {
 
     },
 
-  // mounted: function() {
-  //   if (localStorage.getItem('gotHouses')) {
-  //     try {
-  //       this.gotHouses = JSON.parse(localStorage.getItem('gotHouses'));
-  //     } catch(e) {
-  //       localStorage.removeItem('gotHouses');
-  //     }
-  //   }
-  // },
-
   methods: {
     async opendialog(houseIndex){
+
+      this.gotHouses.forEach(function(house){
+        console.log('R: ' + house.region + ' O: ' + house.overlord);
+      })
+
       let gHouse = this.gotHouses[houseIndex];
 
       let overlordURL = gHouse.overlord;
@@ -202,6 +201,14 @@ Vue.component('datatablehouses', {
         <template slot="item" slot-scope="props">
           <tr @click="opendialog(props.index)">
              <td>{{ props.item.name }}</td>
+             <td>
+               <v-img
+                  height="70px"
+                  max-width="70px"
+                  :src="\`\${regionImages[props.item.region]}\`"
+                  :lazy-src="\`\${regionImages[props.item.region]}\`"
+                ></v-img>
+              </td>
           </tr>
         </template>
       </v-data-table>
