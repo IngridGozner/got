@@ -1,7 +1,3 @@
-tr {
-  height: 80px;
-}
-
 div.v-application--wrap {
   background-image: url('/background2.jpg');
   background-repeat: repeat-y;
@@ -13,4 +9,8 @@ div.theme--dark.v-data-table{
 
 h2{
   font-family: 'Uncial Antiqua', cursive;
+}
+
+div.v-data-table tbody td {
+    font-size: 15px !important;
 }

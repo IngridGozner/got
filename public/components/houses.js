@@ -5,6 +5,8 @@ Vue.component('datatablehouses', {
       gotCharacters: [],
 
       dialog: false,
+      search: '',
+
       house: {},
       keyTitle: ['Region', 'Coat Of Arms', 'Words', 'Titles', 'Seats', 'Current Lord', 'Heir', 'Overlord', 'Founded', 'Founder', 'Died Out','Ancestral Weapons', 'Cadet Branches', 'Sworn Members'],
       keys:['region', 'coatOfArms', 'words', 'titles', 'seats', 'currentLord', 'heir', 'overlord', 'founded', 'founder', 'diedOut', 'ancestralWeapons', 'cadetBranches', 'swornMembers'],
@@ -39,12 +41,9 @@ Vue.component('datatablehouses', {
     },
 
   methods: {
-    async opendialog(houseIndex){
+    async opendialog(houseURL){
 
-      this.gotHouses.forEach(function(house){
-        console.log('R: ' + house.region + ' O: ' + house.overlord);
-      })
-
+      let houseIndex = this.gotHouses.findIndex(house => house.url === houseURL);
       let gHouse = this.gotHouses[houseIndex];
 
       let overlordURL = gHouse.overlord;
@@ -119,7 +118,6 @@ Vue.component('datatablehouses', {
       let character = this.gotCharacters.find(character => character.url === url);
 
       if(character != null){
-        console.log('return without fetching');
         return character.name;
       }
       else{
@@ -128,8 +126,6 @@ Vue.component('datatablehouses', {
           .then(data => {
             character = data;
             this.gotCharacters.push(character);
-            console.log('in fetching char: '+ character.name);
-
           });
           return character.name;
       }
@@ -145,20 +141,28 @@ Vue.component('datatablehouses', {
       <v-card-title>
         <slot name="title"></slot>
         <v-spacer></v-spacer>
+
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
+
       </v-card-title>
 
       <v-dialog
         v-model="dialog"
-        width="600"
+        width="500"
       >
 
       <v-card>
-
            <v-card-title style="font-size:26px; font-family: 'Uncial Antiqua', cursive; text-shadow: 2px 2px 4px #000000;" class="white--text">
                {{ house.name }}
            </v-card-title>
          </v-img>
-
+         <v-spacer></v-spacer>
          <v-card-text>
 
            <v-timeline
@@ -197,14 +201,15 @@ Vue.component('datatablehouses', {
         :headers="headers"
         :items="gotHouses"
         :items-per-page="10"
+        :search="search"
         class="elevation-1">
         <template slot="item" slot-scope="props">
-          <tr @click="opendialog(props.index)">
+          <tr @click="opendialog(props.item.url)">
              <td>{{ props.item.name }}</td>
              <td>
                <v-img
                   height="70px"
-                  max-width="70px"
+                  width="70px"
                   :src="\`\${regionImages[props.item.region]}\`"
                   :lazy-src="\`\${regionImages[props.item.region]}\`"
                 ></v-img>
