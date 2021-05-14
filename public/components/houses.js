@@ -1,7 +1,7 @@
 Vue.component('datatablehouses', {
-  props: ['gothouses'],
   data: function () {
     return {
+      gotHouses: [],
       dialog: false,
       house: {},
       keyTitle: ['Region', 'Coat Of Arms', 'Words', 'Titles', 'Seats', 'Current Lord', 'Heir', 'Overlord', 'Founded', 'Founder', 'Died Out','Ancestral Weapons', 'Cadet Branches', 'Sworn Members'],
@@ -13,13 +13,45 @@ Vue.component('datatablehouses', {
      ],
     }
   },
+  created: function() {
+      console.log('gotHouses created');
+      // fetch("https://www.anapioficeandfire.com/api/houses?page=1&pageSize=50")
+      //   .then(response => response.json())
+      //   .then(data => {this.gotHouses = data;console.log(this.gotHouses);});
+
+
+        Promise.all([
+          fetch("https://www.anapioficeandfire.com/api/houses?page=1&pageSize=50").then(resp => resp.json()),
+          fetch("https://www.anapioficeandfire.com/api/houses?page=2&pageSize=50").then(resp => resp.json()),
+        ]).then(data => {
+
+          for(let i in data)
+            this.gotHouses = this.gotHouses.concat(data[i]);
+
+          console.log(this.gotHouses);
+        })
+
+    },
+
+  // mounted: function() {
+  //   if (localStorage.getItem('gotHouses')) {
+  //     try {
+  //       this.gotHouses = JSON.parse(localStorage.getItem('gotHouses'));
+  //     } catch(e) {
+  //       localStorage.removeItem('gotHouses');
+  //     }
+  //   }
+  // },
+
   methods: {
     opendialog(houseIndex){
-      this.house = this.gothouses[houseIndex];
+      this.house = this.gotHouses[houseIndex];
       this.houseIndex = houseIndex;
 
+
+
       this.dialog = true;
-    }
+    },
   },
 
   template: `
@@ -39,11 +71,7 @@ Vue.component('datatablehouses', {
       >
 
       <v-card>
-         <v-img
-           height="200px"
-           :src="\`../pictures/\${houseIndex}.png\`"
-           :lazy-src="\`../pictures/\${houseIndex}.png\`"
-         >
+
            <v-card-title style="font-size:26px; font-family: 'Uncial Antiqua', cursive; text-shadow: 2px 2px 4px #000000;" class="white--text">
                {{ house.name }}
            </v-card-title>
@@ -85,20 +113,12 @@ Vue.component('datatablehouses', {
 
       <v-data-table
         :headers="headers"
-        :items="gothouses"
-        hide-default-footer
-        disable-pagination>
+        :items="gotHouses"
+        :items-per-page="10"
+        class="elevation-1">
         <template slot="item" slot-scope="props">
           <tr @click="opendialog(props.index)">
              <td>{{ props.item.name }}</td>
-             <td>
-               <v-img
-                  height="70px"
-                  max-width="70px"
-                  :src="\`../pictures/\${props.index}.png\`"
-                  :lazy-src="\`../pictures/\${props.index}.png\`"
-                ></v-img>
-              </td>
           </tr>
         </template>
       </v-data-table>

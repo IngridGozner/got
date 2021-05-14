@@ -4,7 +4,7 @@ tr {
 
 div.v-application--wrap {
   background-image: url('/background2.jpg');
-  background-size: cover;
+  background-repeat: repeat-y;
 }
 
 div.theme--dark.v-data-table{
