@@ -2,11 +2,12 @@ Vue.component('datatablehouses', {
   data: function () {
     return {
       gotHouses: [],
+      gotCharacters: [],
+
       dialog: false,
       house: {},
       keyTitle: ['Region', 'Coat Of Arms', 'Words', 'Titles', 'Seats', 'Current Lord', 'Heir', 'Overlord', 'Founded', 'Founder', 'Died Out','Ancestral Weapons', 'Cadet Branches', 'Sworn Members'],
       keys:['region', 'coatOfArms', 'words', 'titles', 'seats', 'currentLord', 'heir', 'overlord', 'founded', 'founder', 'diedOut', 'ancestralWeapons', 'cadetBranches', 'swornMembers'],
-      houseIndex: '',
 
       headers: [
        { text: 'House Name', value: 'name' },
@@ -15,21 +16,21 @@ Vue.component('datatablehouses', {
   },
   created: function() {
       console.log('gotHouses created');
-      // fetch("https://www.anapioficeandfire.com/api/houses?page=1&pageSize=50")
-      //   .then(response => response.json())
-      //   .then(data => {this.gotHouses = data;console.log(this.gotHouses);});
 
-
-        Promise.all([
-          fetch("https://www.anapioficeandfire.com/api/houses?page=1&pageSize=50").then(resp => resp.json()),
-          fetch("https://www.anapioficeandfire.com/api/houses?page=2&pageSize=50").then(resp => resp.json()),
-        ]).then(data => {
-
-          for(let i in data)
-            this.gotHouses = this.gotHouses.concat(data[i]);
-
-          console.log(this.gotHouses);
-        })
+      Promise.all([
+        fetch("https://www.anapioficeandfire.com/api/houses?page=1&pageSize=50").then(resp => resp.json()),
+        fetch("https://www.anapioficeandfire.com/api/houses?page=2&pageSize=50").then(resp => resp.json()),
+        fetch("https://www.anapioficeandfire.com/api/houses?page=3&pageSize=50").then(resp => resp.json()),
+        fetch("https://www.anapioficeandfire.com/api/houses?page=4&pageSize=50").then(resp => resp.json()),
+        fetch("https://www.anapioficeandfire.com/api/houses?page=5&pageSize=50").then(resp => resp.json()),
+        fetch("https://www.anapioficeandfire.com/api/houses?page=6&pageSize=50").then(resp => resp.json()),
+        fetch("https://www.anapioficeandfire.com/api/houses?page=7&pageSize=50").then(resp => resp.json()),
+        fetch("https://www.anapioficeandfire.com/api/houses?page=8&pageSize=50").then(resp => resp.json()),
+        fetch("https://www.anapioficeandfire.com/api/houses?page=9&pageSize=50").then(resp => resp.json())
+      ]).then(data => {
+        for(let i in data)
+          this.gotHouses = this.gotHouses.concat(data[i]);
+      })
 
     },
 
@@ -44,14 +45,49 @@ Vue.component('datatablehouses', {
   // },
 
   methods: {
-    opendialog(houseIndex){
-      this.house = this.gotHouses[houseIndex];
-      this.houseIndex = houseIndex;
+    async opendialog(houseIndex){
+      let gHouse = this.gotHouses[houseIndex];
+      let overlordURL = gHouse.overlord;
+      let currentLordURL = gHouse.currentLord;
+      let heirURL = gHouse.heir;
+      let founderURL = gHouse.founder;
 
-
+      if(currentLordURL != "" && currentLordURL.startsWith('https')){
+        this.gotHouses[houseIndex].currentLord = await this.getCharacterName(currentLordURL);
+      }
+      if(heirURL != "" && heirURL.startsWith('https')){
+        this.gotHouses[houseIndex].heir = await this.getCharacterName(heirURL);
+      }
+      if(founderURL != "" && founderURL.startsWith('https')){
+        this.gotHouses[houseIndex].founder = await this.getCharacterName(founderURL);
+      }
+      if(overlordURL != "" && overlordURL.startsWith('https')){
+        this.gotHouses[houseIndex].overlord = this.gotHouses.find(house => house.url === overlordURL).name;
+      }
+        this.house = this.gotHouses[houseIndex];
 
       this.dialog = true;
     },
+
+    async getCharacterName(url){
+      let character = this.gotCharacters.find(character => character.url === url);
+
+      if(character != null){
+        console.log('return without fetching');
+        return character.name;
+      }
+      else{
+        await fetch(url)
+          .then(response => response.json())
+          .then(data => {
+            character = data;
+            this.gotCharacters.push(character);
+            console.log('in fetching char: '+ character.name);
+
+          });
+          return character.name;
+      }
+    }
   },
 
   template: `
