@@ -47,10 +47,21 @@ Vue.component('datatablehouses', {
   methods: {
     async opendialog(houseIndex){
       let gHouse = this.gotHouses[houseIndex];
+
       let overlordURL = gHouse.overlord;
       let currentLordURL = gHouse.currentLord;
       let heirURL = gHouse.heir;
       let founderURL = gHouse.founder;
+
+      let houses = this.gotHouses;
+      let characters = this.gotCharacters;
+      let newCharacters = [];
+
+      let swornMembersArrayURL = gHouse.swornMembers;
+      let swornMembersArray = [];
+
+      let cadetBranchesArrayURL = gHouse.cadetBranches;
+      let cadetBranchesArray = [];
 
       if(currentLordURL != "" && currentLordURL.startsWith('https')){
         this.gotHouses[houseIndex].currentLord = await this.getCharacterName(currentLordURL);
@@ -64,7 +75,43 @@ Vue.component('datatablehouses', {
       if(overlordURL != "" && overlordURL.startsWith('https')){
         this.gotHouses[houseIndex].overlord = this.gotHouses.find(house => house.url === overlordURL).name;
       }
-        this.house = this.gotHouses[houseIndex];
+
+      if(cadetBranchesArrayURL.length != "" && cadetBranchesArrayURL[0].startsWith('https')){
+        cadetBranchesArrayURL.forEach(function(branchURL){
+          cadetBranchesArray.push(houses.find(house => house.url === branchURL).name);
+        })
+
+        this.gotHouses[houseIndex].cadetBranches = cadetBranchesArray;
+      }
+
+      if(swornMembersArrayURL.length != "" && swornMembersArrayURL[0].startsWith('https')){
+        let urls = [];
+        swornMembersArrayURL.forEach(function(memberURL){
+          let member = characters.find(c => c.url === memberURL);
+          if(member != undefined){
+            swornMembersArray.push(member.name);
+          }
+          else{
+            urls.push(memberURL);
+          }
+        });
+
+        await Promise.all(urls.map(u=>fetch(u))).then(responses =>
+              Promise.all(responses.map(res => res.json()))
+          ).then(data => {
+            data.forEach(function(item) {
+              newCharacters.push(item);
+              swornMembersArray.push(item.name);
+            });
+          });
+
+          this.gotCharacters = this.gotCharacters.concat(newCharacters);
+          newCharacters = [];
+
+        this.gotHouses[houseIndex].swornMembers = swornMembersArray;
+      }
+
+      this.house = this.gotHouses[houseIndex];
 
       this.dialog = true;
     },
