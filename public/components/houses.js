@@ -6,6 +6,7 @@ Vue.component('datatablehouses', {
 
       dialog: false,
       search: '',
+      isActive: false,
 
       house: {},
       keyTitle: ['Region', 'Coat Of Arms', 'Words', 'Titles', 'Seats', 'Current Lord', 'Heir', 'Overlord', 'Founded', 'Founder', 'Died Out','Ancestral Weapons', 'Cadet Branches', 'Sworn Members'],
@@ -40,7 +41,6 @@ Vue.component('datatablehouses', {
 
   methods: {
     async opendialog(houseURL){
-
       let houseIndex = this.gotHouses.findIndex(house => house.url === houseURL);
       let gHouse = this.gotHouses[houseIndex];
 
@@ -60,13 +60,16 @@ Vue.component('datatablehouses', {
       let cadetBranchesArray = [];
 
       if(currentLordURL != "" && currentLordURL.startsWith('https')){
-        this.gotHouses[houseIndex].currentLord = await this.getCharacterName(currentLordURL);
+        fetch(currentLordURL).then(resp =>resp.json()
+          ).then(data => {this.gotHouses[houseIndex].currentLord = data.name})
       }
       if(heirURL != "" && heirURL.startsWith('https')){
-        this.gotHouses[houseIndex].heir = await this.getCharacterName(heirURL);
+        fetch(heirURL).then(resp =>resp.json()
+          ).then(data => {this.gotHouses[houseIndex].heir = data.name})
       }
       if(founderURL != "" && founderURL.startsWith('https')){
-        this.gotHouses[houseIndex].founder = await this.getCharacterName(founderURL);
+        fetch(founderURL).then(resp =>resp.json()
+          ).then(data => {this.gotHouses[houseIndex].founder = data.name})
       }
       if(overlordURL != "" && overlordURL.startsWith('https')){
         this.gotHouses[houseIndex].overlord = this.gotHouses.find(house => house.url === overlordURL).name;
@@ -92,8 +95,8 @@ Vue.component('datatablehouses', {
           }
         });
 
-        await Promise.all(urls.map(u=>fetch(u))).then(responses =>
-              Promise.all(responses.map(res => res.json()))
+        Promise.all(urls.map(u=>fetch(u).then(responses =>
+              responses.json()))
           ).then(data => {
             data.forEach(function(item) {
               newCharacters.push(item);
@@ -111,22 +114,6 @@ Vue.component('datatablehouses', {
       this.dialog = true;
     },
 
-    async getCharacterName(url){
-      let character = this.gotCharacters.find(character => character.url === url);
-
-      if(character != null){
-        return character.name;
-      }
-      else{
-        await fetch(url)
-          .then(response => response.json())
-          .then(data => {
-            character = data;
-            this.gotCharacters.push(character);
-          });
-          return character.name;
-      }
-    }
   },
 
   template: `
@@ -178,6 +165,7 @@ Vue.component('datatablehouses', {
                  </div>
 
                  <div v-if="house[element] == '' ">Unknown</div>
+
                  <div v-else-if="element == 'titles' || element == 'seats' || element == 'swornMembers' || element == 'cadetBranches' || element == 'ancestralWeapons'">
                  <v-list-item v-for="(el, index) in house[element]" :key="index">
                     <v-list-item-content>
@@ -186,7 +174,7 @@ Vue.component('datatablehouses', {
                   </v-list-item>
                  </div>
 
-                 <div v-else-if="house[element] != ''">{{ house[element] }}</div>
+                 <div v-else-if="house[element] != '' ">{{ house[element] }}</div>
 
                </div>
              </v-timeline-item>
