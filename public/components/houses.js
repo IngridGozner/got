@@ -16,13 +16,12 @@ Vue.component('datatablehouses', {
 
       headers: [
        { text: 'House Name', value: 'name' },
+        { text: 'Words', value: 'words' },
        { text: 'Region', value: 'regionImages'}
      ],
     }
   },
   created: function() {
-      console.log('gotHouses created');
-
       Promise.all([
         fetch("https://www.anapioficeandfire.com/api/houses?page=1&pageSize=50").then(resp => resp.json()),
         fetch("https://www.anapioficeandfire.com/api/houses?page=2&pageSize=50").then(resp => resp.json()),
@@ -37,7 +36,6 @@ Vue.component('datatablehouses', {
         for(let i in data)
           this.gotHouses = this.gotHouses.concat(data[i]);
       })
-
     },
 
   methods: {
@@ -104,7 +102,6 @@ Vue.component('datatablehouses', {
           });
 
           this.gotCharacters = this.gotCharacters.concat(newCharacters);
-          newCharacters = [];
 
         this.gotHouses[houseIndex].swornMembers = swornMembersArray;
       }
@@ -154,6 +151,7 @@ Vue.component('datatablehouses', {
 
       <v-dialog
         v-model="dialog"
+        scrollable
         width="500"
       >
 
@@ -179,7 +177,7 @@ Vue.component('datatablehouses', {
                    <strong>{{ keyTitle[index] }}</strong>
                  </div>
 
-                 <div v-if="house[element] == '' "> Unknown </div>
+                 <div v-if="house[element] == '' ">Unknown</div>
                  <div v-else-if="element == 'titles' || element == 'seats' || element == 'swornMembers' || element == 'cadetBranches' || element == 'ancestralWeapons'">
                  <v-list-item v-for="(el, index) in house[element]" :key="index">
                     <v-list-item-content>
@@ -206,6 +204,7 @@ Vue.component('datatablehouses', {
         <template slot="item" slot-scope="props">
           <tr @click="opendialog(props.item.url)">
              <td>{{ props.item.name }}</td>
+             <td>{{ props.item.words }}</td>
              <td>
                <v-img
                   height="70px"
