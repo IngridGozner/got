@@ -1,6 +1,6 @@
 div.v-application--wrap {
-  background-image: url('/background2.jpg');
-  background-repeat: repeat-y;
+  background-image: url('/gotBackground.jpg');
+  background-size: cover;
 }
 
 div.theme--dark.v-data-table{

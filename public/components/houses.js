@@ -200,7 +200,9 @@ Vue.component('datatablehouses', {
         :items="gotHouses"
         :items-per-page="10"
         :search="search"
-        class="elevation-1">
+        class="elevation-1"
+        :footer-props="{ disableItemsPerPage : true }"
+        >
         <template slot="item" slot-scope="props">
           <tr @click="opendialog(props.item.url)">
              <td>{{ props.item.name }}</td>

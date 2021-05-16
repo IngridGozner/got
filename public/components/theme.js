@@ -23,7 +23,7 @@ Vue.component('theme', {
      ></v-img>
 
     <v-toolbar-title class="mr-12 align-center">
-      <span style="color:#fbfbfb">{{ title }}</span>
+      <span style="color:#fbfbfb; font-family: 'Uncial Antiqua', cursive">{{ title }}</span>
     </v-toolbar-title>
 
     </v-app-bar>
