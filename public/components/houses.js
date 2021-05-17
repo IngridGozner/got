@@ -112,8 +112,13 @@ Vue.component('datatablehouses', {
       this.house = this.gotHouses[houseIndex];
 
       this.dialog = true;
+
     },
 
+    scrollToTop(){
+      document.getElementsByClassName('v-dialog--active')[0].scrollTop = 0;
+      this.dialog = false;
+    }
   },
 
   template: `
@@ -138,12 +143,12 @@ Vue.component('datatablehouses', {
 
       <v-dialog
         v-model="dialog"
-        scrollable
         width="500"
+        @click:outside="scrollToTop"
       >
 
       <v-card>
-           <v-card-title style="font-size:26px; font-family: 'Uncial Antiqua', cursive; text-shadow: 2px 2px 4px #000000;" class="white--text">
+           <v-card-title style="word-break: normal; font-size:30px; font-family: 'Uncial Antiqua', cursive; text-shadow: 2px 2px 4px #000000;" class="white--text">
                {{ house.name }}
            </v-card-title>
          </v-img>
@@ -180,6 +185,7 @@ Vue.component('datatablehouses', {
              </v-timeline-item>
            </v-timeline>
          </v-card-text>
+
        </v-card>
       </v-dialog>
 
@@ -189,19 +195,22 @@ Vue.component('datatablehouses', {
         :items-per-page="10"
         :search="search"
         class="elevation-1"
-        :footer-props="{ disableItemsPerPage : true }"
         >
-        <template slot="item" slot-scope="props">
-          <tr @click="opendialog(props.item.url)">
-             <td>{{ props.item.name }}</td>
-             <td>{{ props.item.words }}</td>
+        <template v-slot:item="{ item }">
+          <tr @click="opendialog(item.url)">
+             <td>{{ item.name }}</td>
+             <td>{{ item.words }}</td>
              <td>
-               <v-img
-                  height="70px"
-                  width="70px"
-                  :src="\`\${regionImages[props.item.region]}\`"
-                  :lazy-src="\`\${regionImages[props.item.region]}\`"
+               <v-img v-if="regionImages[item.region] != undefined"
+                  width="80px"
+                  :src="\`\${regionImages[item.region]}\`"
+                  :lazy-src="\`\${regionImages[item.region]}\`"
                 ></v-img>
+                <v-img v-else
+                   width="80px"
+                   :src="\`\../pictures/undefined.png\`"
+                   :lazy-src="\`\../pictures/undefined.png\`"
+                 ></v-img>
               </td>
           </tr>
         </template>

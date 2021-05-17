@@ -1,6 +1,6 @@
 div.v-application--wrap {
   background-image: url('/gotBackground.jpg');
-  background-size: cover;
+  background-repeat: repeat-y;
 }
 
 div.theme--dark.v-data-table{
@@ -12,5 +12,5 @@ h2{
 }
 
 div.v-data-table tbody td {
-    font-size: 15px !important;
+    font-size: 18px !important;
 }
